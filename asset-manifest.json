@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/transform_matrix_css_editor/static/css/main.946f8dcb.css",
+    "main.js": "/transform_matrix_css_editor/static/js/main.89511f4e.js",
+    "index.html": "/transform_matrix_css_editor/index.html",
+    "main.946f8dcb.css.map": "/transform_matrix_css_editor/static/css/main.946f8dcb.css.map",
+    "main.89511f4e.js.map": "/transform_matrix_css_editor/static/js/main.89511f4e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.946f8dcb.css",
+    "static/js/main.89511f4e.js"
+  ]
+}
