@@ -60,7 +60,7 @@ export const Ranges  = styled.section`
   padding: 10px;
 `
 export const Textarea  = styled.textarea`
-  width: 300px;
+  width: 350px;
   height: 5em;
   background: #1d3330;
   color: white;
