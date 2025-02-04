@@ -1,70 +1,116 @@
-# Getting Started with Create React App
+# Transform Matrix CSS Editor
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Una herramienta web interactiva para crear y visualizar transformaciones CSS mediante matrices. Este editor ayuda a desarrolladores y diseñadores a entender y manipular las propiedades de transformación CSS de manera visual e intuitiva.
 
-## Available Scripts
+![Transform Matrix Editor Demo](./public/demo.png)
 
-In the project directory, you can run:
+## Características
 
-### `npm start`
+- Editor visual para matrices de transformación CSS
+- Vista previa en tiempo real de las transformaciones
+- Interfaz intuitiva para ajustar valores de transformación
+- Código CSS listo para copiar y pegar
+- Soporte para operaciones comunes de transformación:
+  - Escala (Scale)
+  - Rotación (Rotate)
+  - Traslación (Translate)
+  - Sesgo (Skew)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Inicio Rápido
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Prerrequisitos
 
-### `npm test`
+- Node.js (v14 o superior)
+- npm (viene con Node.js)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Instalación
 
-### `npm run build`
+1. Clona el repositorio:
+```bash
+git clone https://github.com/yourusername/transform-matrix-css-editor.git
+cd transform-matrix-css-editor
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Instala las dependencias:
+```bash
+npm install
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+3. Inicia el servidor de desarrollo:
+```bash
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+La aplicación se abrirá automáticamente en tu navegador predeterminado en [http://localhost:3000](http://localhost:3000).
 
-### `npm run eject`
+## Cómo Usar
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Ajuste de Transformaciones**
+   - Usa los deslizadores para ajustar los valores de transformación
+   - Observa los cambios en tiempo real en la vista previa
+   - Los valores se actualizan automáticamente en el código CSS
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+2. **Valores de la Matriz**
+   - **Scale X (a)**: Escala horizontal (-3 a 3)
+   - **Skew Y (b)**: Sesgo vertical (-5 a 5)
+   - **Skew X (c)**: Sesgo horizontal (-5 a 5)
+   - **Scale Y (d)**: Escala vertical (-3 a 3)
+   - **Translate X**: Traslación horizontal (-150px a 150px)
+   - **Translate Y**: Traslación vertical (-150px a 150px)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. **Copiar Código CSS**
+   - El código CSS generado incluye prefijos de navegador (-webkit, -ms)
+   - Usa el botón "Copy CSS" para copiar el código al portapapeles
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Tecnologías Utilizadas
 
-## Learn More
+- React - Framework de frontend
+- Create React App - Configuración del proyecto
+- CSS Modules - Estilos
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Contribuir
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Contribuciones son bienvenidas! Sigue estos pasos:
 
-### Code Splitting
+1. Haz fork del proyecto
+2. Crea una rama para tu característica (`git checkout -b feature/AmazingFeature`)
+3. Haz commit de tus cambios (`git commit -m 'Add: nueva característica'`)
+4. Haz push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Convenciones de Código
 
-### Analyzing the Bundle Size
+- Usa nombres descriptivos para variables y funciones
+- Sigue las convenciones de React para componentes
+- Mantén el código limpio y bien documentado
+- Usa comentarios JSDoc para funciones importantes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Estructura del Proyecto
 
-### Making a Progressive Web App
+```
+transform-matrix-css-editor/
+├── src/
+│   ├── components/
+│   │   ├── Matrix.js       # Componente principal del editor
+│   │   └── Slider.js       # Componente de deslizador
+│   ├── EditableTag.js      # Estilos y componentes styled-components
+│   └── App.js             # Componente raíz
+├── public/
+│   └── index.html
+└── package.json
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Referencias
 
-### Advanced Configuration
+- [CSS Transform Matrix](https://developer.mozilla.org/en-US/docs/Web/CSS/transform-function/matrix)
+- [Understanding CSS Transforms](https://www.w3.org/TR/css-transforms-1/)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Licencia
 
-### Deployment
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Agradecimientos
 
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Gracias al equipo de Create React App por el scaffolding inicial
+- Inspirado en la necesidad de una mejor herramienta de visualización de transformaciones CSS
+- Comunidad de desarrolladores por su feedback y sugerencias
