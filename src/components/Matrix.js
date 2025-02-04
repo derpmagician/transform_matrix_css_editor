@@ -4,41 +4,65 @@ import { Main, MatrixDiv, Section, Section2, Description, Options, Ranges, Optio
 
 /**
  * Constant ranges for different transformation types
- * These define the minimum, maximum, and step values for each slider
  */
 const RANGES = {
-  SCALE: { MIN: -3, MAX: 3, STEP: 0.01 },     // Scale range: -3x to 3x
-  SKEW: { MIN: -5, MAX: 5, STEP: 0.01 },      // Skew range: -5 to 5 degrees
-  TRANSLATE: { MIN: -150, MAX: 150, STEP: 0.01 } // Translation range: -150px to 150px
+  SCALE: { MIN: -3, MAX: 3, STEP: 0.01 },
+  SKEW: { MIN: -5, MAX: 5, STEP: 0.01 },
+  TRANSLATE: { MIN: -150, MAX: 150, STEP: 0.01 },
+  ROTATE: { MIN: -180, MAX: 180, STEP: 1 }
 };
 
 /**
- * Sliders Component
- * A component that provides an interactive interface for manipulating CSS matrix transformations.
- * Allows users to adjust scale, skew, and translation values through sliders and displays
- * the resulting CSS transform matrix.
- * 
- * @returns {JSX.Element} The rendered Sliders component
+ * Preset transformations for quick application
  */
+const PRESETS = {
+  FLIP_HORIZONTAL: { a: -1, b: 0, c: 0, d: 1, x: 0, y: 0 },
+  FLIP_VERTICAL: { a: 1, b: 0, c: 0, d: -1, x: 0, y: 0 },
+  ROTATE_45: { a: 0.707, b: 0.707, c: -0.707, d: 0.707, x: 0, y: 0 },
+  ROTATE_90: { a: 0, b: 1, c: -1, d: 0, x: 0, y: 0 },
+  MIRROR: { a: -1, b: 0, c: 0, d: -1, x: 0, y: 0 },
+  SKEW_DIAMOND: { a: 1, b: 1, c: 1, d: 1, x: 0, y: 0 }
+};
+
+/**
+ * Convert degrees to radians
+ */
+const degToRad = (degrees) => {
+  return degrees * (Math.PI / 180);
+};
+
+/**
+ * Calculate matrix values for rotation
+ */
+const calculateRotationMatrix = (degrees) => {
+  const rad = degToRad(degrees);
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  return {
+    a: cos.toFixed(3),
+    b: sin.toFixed(3),
+    c: (-sin).toFixed(3),
+    d: cos.toFixed(3),
+    x: 0,
+    y: 0
+  };
+};
+
 const Sliders = () => {
-  // Initial default values for the transformation matrix
   const defaultValues = {
-    a: 1, // scale x - Horizontal scaling
-    b: 0, // skew y - Vertical skewing
-    c: 0, // skew x - Horizontal skewing
-    d: 1, // scale y - Vertical scaling
-    x: 0, // translate x - Horizontal translation
-    y: 0  // translate y - Vertical translation
+    a: 1,
+    b: 0,
+    c: 0,
+    d: 1,
+    x: 0,
+    y: 0,
+    rotation: 0
   };
 
-  // State to manage all matrix values in a single object
   const [matrixValues, setMatrixValues] = useState(defaultValues);
+  const [history, setHistory] = useState([defaultValues]);
+  const [historyIndex, setHistoryIndex] = useState(0);
 
-  /**
-   * Memoized CSS matrix string generation
-   * Generates the CSS transform matrix string including vendor prefixes
-   * Only recalculates when matrixValues changes
-   */
   const matrixCSS = useMemo(() => {
     const { a, b, c, d, x, y } = matrixValues;
     return `transform:matrix(${a}, ${b}, ${c}, ${d}, ${x},${y});
@@ -47,28 +71,80 @@ const Sliders = () => {
   }, [matrixValues]);
 
   /**
-   * Generic handler for matrix value changes
-   * @param {string} key - The matrix property to update (a, b, c, d, x, or y)
-   * @returns {Function} Event handler function that updates the specified matrix value
+   * Add current state to history
    */
+  const addToHistory = useCallback((newValues) => {
+    setHistory(prev => {
+      const newHistory = [...prev.slice(0, historyIndex + 1), newValues];
+      if (newHistory.length > 10) newHistory.shift(); // Keep last 10 states
+      return newHistory;
+    });
+    setHistoryIndex(prev => Math.min(prev + 1, 9));
+  }, [historyIndex]);
+
   const handleMatrixChange = useCallback((key) => (e) => {
-    setMatrixValues(prev => ({
-      ...prev,
+    const newValues = {
+      ...matrixValues,
       [key]: Number(e.target.value)
-    }));
-  }, []);
+    };
+    setMatrixValues(newValues);
+    addToHistory(newValues);
+  }, [matrixValues, addToHistory]);
 
   /**
-   * Resets all matrix values to their defaults
+   * Handle rotation changes
    */
+  const handleRotation = useCallback((e) => {
+    const degrees = Number(e.target.value);
+    const rotationMatrix = calculateRotationMatrix(degrees);
+    const newValues = {
+      ...rotationMatrix,
+      x: matrixValues.x,
+      y: matrixValues.y,
+      rotation: degrees
+    };
+    setMatrixValues(newValues);
+    addToHistory(newValues);
+  }, [matrixValues, addToHistory]);
+
+  /**
+   * Apply preset transformation
+   */
+  const applyPreset = useCallback((preset) => {
+    const newValues = {
+      ...PRESETS[preset],
+      rotation: 0
+    };
+    setMatrixValues(newValues);
+    addToHistory(newValues);
+  }, [addToHistory]);
+
+  /**
+   * Undo last transformation
+   */
+  const undo = useCallback(() => {
+    if (historyIndex > 0) {
+      setHistoryIndex(prev => prev - 1);
+      setMatrixValues(history[historyIndex - 1]);
+    }
+  }, [history, historyIndex]);
+
+  /**
+   * Redo last undone transformation
+   */
+  const redo = useCallback(() => {
+    if (historyIndex < history.length - 1) {
+      setHistoryIndex(prev => prev + 1);
+      setMatrixValues(history[historyIndex + 1]);
+    }
+  }, [history, historyIndex]);
+
   const resetToDefault = useCallback(() => {
     setMatrixValues(defaultValues);
+    setHistory([defaultValues]);
+    setHistoryIndex(0);
   }, []);
 
-  /**
-   * Copies the current CSS matrix string to the clipboard
-   * Shows a success alert or logs error if copy fails
-   */
   const copyToClipboard = useCallback(() => {
     navigator.clipboard.writeText(matrixCSS)
       .then(() => alert('CSS copied to clipboard!'))
@@ -79,20 +155,29 @@ const Sliders = () => {
     <Fragment>
       <Main>
         <Section>
-          <MatrixDiv
-            matrixA={matrixValues.a}
-            matrixB={matrixValues.b}
-            matrixC={matrixValues.c}
-            matrixD={matrixValues.d}
-            matrixValueX={matrixValues.x}
-            matrixValueY={matrixValues.y}
-          >
+          <MatrixDiv {...matrixValues}>
             Sliders Below
           </MatrixDiv>
         </Section>
       </Main>
       <Section2>
         <Options>
+          {/* Rotation Control */}
+          <Ranges>
+            <OptionTitle>Rotation:</OptionTitle>
+            <div title="Rotate the element (in degrees)">
+              <div>Degrees: {matrixValues.rotation || 0}°</div>
+              <Slider
+                type="range"
+                value={matrixValues.rotation || 0}
+                onChange={handleRotation}
+                min={RANGES.ROTATE.MIN}
+                max={RANGES.ROTATE.MAX}
+                step={RANGES.ROTATE.STEP}
+              />
+            </div>
+          </Ranges>
+
           {/* Scale Controls */}
           <Ranges>
             <OptionTitle>Scale:</OptionTitle>
@@ -119,7 +204,7 @@ const Sliders = () => {
               />
             </div>
           </Ranges>
-          
+
           {/* Skew Controls */}
           <Ranges>
             <OptionTitle>Skew:</OptionTitle>
@@ -146,7 +231,7 @@ const Sliders = () => {
               />
             </div>
           </Ranges>
-          
+
           {/* Translation Controls */}
           <Ranges>
             <OptionTitle>Translation:</OptionTitle>
@@ -173,9 +258,52 @@ const Sliders = () => {
               />
             </div>
           </Ranges>
-          <Button onClick={resetToDefault}>Reset Default</Button>
+
+          {/* Preset Buttons - In separate columns */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(6, 1fr)',
+            gap: '10px',
+            marginBottom: '10px'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={() => applyPreset('FLIP_HORIZONTAL')}>Flip H</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={() => applyPreset('FLIP_VERTICAL')}>Flip V</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={() => applyPreset('ROTATE_45')}>Rotate 45°</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={() => applyPreset('ROTATE_90')}>Rotate 90°</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={() => applyPreset('MIRROR')}>Mirror</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={() => applyPreset('SKEW_DIAMOND')}>Diamond</Button>
+            </div>
+          </div>
+
+          {/* History Controls - In a separate row */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(3, 1fr)', 
+            gap: '10px'
+          }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={undo} disabled={historyIndex === 0}>Undo</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={resetToDefault}>Reset</Button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+              <Button onClick={redo} disabled={historyIndex === history.length - 1}>Redo</Button>
+            </div>
+          </div>
         </Options>
-        
+
         {/* CSS Output Section */}
         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
           <Textarea
@@ -184,7 +312,7 @@ const Sliders = () => {
           />
           <Button onClick={copyToClipboard} style={{ width: '350px' }}>Copy CSS</Button>
         </div>
-        
+
         {/* Matrix Description */}
         <Description>
           <DescriptionTitle>Transform matrix(a,b,c,d,tx,ty)</DescriptionTitle>

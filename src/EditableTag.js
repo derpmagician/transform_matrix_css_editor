@@ -12,7 +12,8 @@ const COLORS = {
 
 export const MatrixDiv = styled.div.attrs(props => ({
   style: {
-    transform: `matrix(${props.matrixA},${props.matrixB},${props.matrixC},${props.matrixD},${props.matrixValueX},${props.matrixValueY})`,
+    transform: `matrix(${props.a},${props.b},${props.c},${props.d},${props.x},${props.y})`,
+    transition: 'transform 0.3s ease-out'
   },
 }))`
   background-color: ${COLORS.ACCENT};
