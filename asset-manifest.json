@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/transform_matrix_css_editor/static/css/main.946f8dcb.css",
-    "main.js": "/transform_matrix_css_editor/static/js/main.11053574.js",
+    "main.js": "/transform_matrix_css_editor/static/js/main.e24f3b9e.js",
     "index.html": "/transform_matrix_css_editor/index.html",
     "main.946f8dcb.css.map": "/transform_matrix_css_editor/static/css/main.946f8dcb.css.map",
-    "main.11053574.js.map": "/transform_matrix_css_editor/static/js/main.11053574.js.map"
+    "main.e24f3b9e.js.map": "/transform_matrix_css_editor/static/js/main.e24f3b9e.js.map"
   },
   "entrypoints": [
     "static/css/main.946f8dcb.css",
-    "static/js/main.11053574.js"
+    "static/js/main.e24f3b9e.js"
   ]
 }
